@@ -1,5 +1,5 @@
 <script>
-  import parser from 'ua-parser-js';
+  import * as parser from 'ua-parser-js';
 
   import Footer from './components/Footer/index.svelte';
 
