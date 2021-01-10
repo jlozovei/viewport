@@ -70,8 +70,6 @@
       online: window.navigator.onLine
     }
   }
-
-  console.log(navigator, userAgentParser);
 </script>
 
 <style>
