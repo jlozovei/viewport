@@ -1,5 +1,5 @@
 <script>
-  import * as parser from 'ua-parser-js';
+  import * as Bowser from "bowser";
 
   import Footer from './components/Footer/index.svelte';
 
@@ -25,14 +25,13 @@
   export const navigator = {
     userAgent: window.navigator.userAgent,
     vendor: window.navigator.vendor,
-    platform: window.navigator.platform,
     language: window.navigator.language,
     logicalProcessors: window.navigator.hardwareConcurrency,
     cookies: window.navigator.cookieEnabled,
     tracking: window.navigator.doNotTrack
-  }
+  };
 
-  export const userAgentParser = parser(window.navigator.userAgent);
+  export const userAgentParser = Bowser.parse(window.navigator.userAgent);
 
   export const storage = {
     localStorageHasData: window.localStorage.length > 0,
@@ -194,12 +193,12 @@
 
               <tr>
                 <td>Browser Name</td>
-                <td>{userAgentParser.browser.name} (v {userAgentParser.browser.major})</td>
+                <td>{userAgentParser.browser.name} (v {userAgentParser.browser.version})</td>
               </tr>
 
               <tr>
                 <td>Browser Engine</td>
-                <td>{userAgentParser.engine.name} (v {userAgentParser.engine.version})</td>
+                <td>{userAgentParser.engine.name}</td>
               </tr>
 
               <tr>
@@ -230,12 +229,26 @@
             <tbody>
               <tr>
                 <td>Platform</td>
-                <td>{navigator.platform}</td>
+                <td>
+                  {userAgentParser.platform.vendor}&nbsp;
+
+                  {#if userAgentParser.platform.type === 'desktop'}
+                    <span role="img" data-label="Desktop" title="Desktop">🖥️</span>
+                  {:else}
+                    <span role="img" data-label="Mobile" title="Mobile">📱</span>
+                  {/if}
+                </td>
               </tr>
 
               <tr>
                 <td>Name and version</td>
-                <td>{userAgentParser.os.name}, {userAgentParser.os.version}</td>
+                <td>
+                  {userAgentParser.os.name}
+                  {userAgentParser.os.version}
+                  {#if userAgentParser.os.versionName}
+                    {userAgentParser.os.versionName}
+                  {/if}
+                </td>
               </tr>
             </tbody>
           </table>
