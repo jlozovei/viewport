@@ -1,9 +1,22 @@
 <script>
   import { viewportModalOpen } from '../../store/index.js';
 
-  import { viewport } from '../../constants/index.js';
+  import { viewport, screen, viewportNames } from '../../constants/index.js';
 
   export const viewportInfo = viewport;
+  export const screenInfo = screen;
+
+  const matchingViewport = Object.values(viewportNames).filter(key => {
+    const { minWidth, maxWidth } = key;
+
+    if (maxWidth) {
+      return minWidth <= viewportInfo.width && maxWidth > viewportInfo.width;
+    } else {
+      return minWidth <= viewportInfo.width;
+    }
+  });
+
+  export const currentViewport = matchingViewport[matchingViewport.length - 1];
 
   let isModalOpen;
 
@@ -63,9 +76,12 @@
   <button class="viewport-modal__close" on:click={closeModal} title="Close modal">Close</button>
 
   <h4 class="viewport-modal__title" data-testid="viewport-name">
-    viewport-name
+    {currentViewport.name}
   </h4>
   <p class="viewport-modal__size" data-testid="viewport-size">
-    {viewportInfo.width} x {viewportInfo.height} (px)
+    Size: {viewportInfo.width} x {viewportInfo.height} (px)
+  </p>
+  <p class="viewport-modal__size" data-testid="viewport-resolution">
+    Resolution: {screenInfo.width} x {screenInfo.height} (px)
   </p>
 </div>

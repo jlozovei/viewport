@@ -9,5 +9,6 @@ describe('ViewportModal', () => {
 
     expect(getByTestId('viewport-name')).toBeInTheDocument();
     expect(getByTestId('viewport-size')).toBeInTheDocument();
+    expect(getByTestId('viewport-resolution')).toBeInTheDocument();
   });
 });
