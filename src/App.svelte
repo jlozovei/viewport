@@ -1,34 +1,26 @@
 <script>
   import * as Bowser from "bowser";
 
-  import Footer from './components/Footer/index.svelte';
+  import { viewportModalOpen } from './store/index.js';
 
-  export let viewport = {
-    width: window.outerWidth,
-    height: window.outerHeight,
-    pixelRatio: window.devicePixelRatio,
-    secure: window.isSecureContext,
-    online: window.navigator.onLine
-  };
+  import Footer from './components/Footer/index.svelte';
+  import ViewportModal from './components/ViewportModal/index.svelte';
+
+  import { viewport, screen, navigator } from './constants/index.js';
+
+  let isModalOpen;
+
+  viewportModalOpen.subscribe(value => {
+    isModalOpen = value;
+  });
+
+  export let viewportInfo = viewport;
+  export let screenInfo = screen;
+  export const navigatorInfo = navigator;
 
   export let page = {
     width: window.innerWidth,
     height: window.innerHeight
-  };
-
-  export let screen = {
-    width: window.screen.width * viewport.pixelRatio,
-    height: window.screen.height * viewport.pixelRatio,
-    orientation: window.screen?.orientation?.type
-  };
-
-  export const navigator = {
-    userAgent: window.navigator.userAgent,
-    vendor: window.navigator.vendor,
-    language: window.navigator.language,
-    logicalProcessors: window.navigator.hardwareConcurrency,
-    cookies: window.navigator.cookieEnabled,
-    tracking: window.navigator.doNotTrack
   };
 
   export const userAgentParser = Bowser.parse(window.navigator.userAgent);
@@ -43,8 +35,12 @@
     ssl: window.location.protocol === 'https://'
   };
 
+  function openModal() {
+    viewportModalOpen.update(() => true);
+  }
+
   function updateViewportSize() {
-    viewport = {
+    viewportInfo = {
       ...viewport,
       pixelRatio: window.devicePixelRatio
     };
@@ -55,16 +51,16 @@
       height: window.innerHeight
     };
 
-    screen = {
+    screenInfo = {
       ...screen,
-      width: window.screen.width * viewport.pixelRatio,
-      height: window.screen.height * viewport.pixelRatio,
+      width: window.screen.width * viewportInfo.pixelRatio,
+      height: window.screen.height * viewportInfo.pixelRatio,
       orientation: window.screen?.orientation?.type
     };
   }
 
   function updateConnectionStatus() {
-    viewport = {
+    viewportInfo = {
       ...viewport,
       online: window.navigator.onLine
     }
@@ -74,6 +70,16 @@
 <style>
   .section {
     padding: 4rem 0;
+  }
+
+  .section__button {
+    padding: 1rem;
+    background-color: black;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
   }
 
   .section--headline {
@@ -91,6 +97,10 @@
   .section--headline a {
     color: white;
     font-weight: bold;
+  }
+
+  .section--headline button {
+    margin-top: 2rem;
   }
 
   .section--info .section__grid {
@@ -124,6 +134,8 @@
         <p>Some useful information about your current viewport, browser and OS.</p>
         <p>These data is already inside your browser, and it's collected using the <code>window</code>, <code>navigator</code>, <code>screen</code>, <code>localStorage</code>, <code>sessionStorage</code> and <code>document.cookie</code> objects.</p>
         <p>For more information about these objects, take a look on <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window" target="_blank" rel="noopener noreferrer">MDN documentation</a>.</p>
+
+        <button class="section__button" on:click={openModal}>See viewport size</button>
       </div>
     </div>
   </div>
@@ -141,27 +153,27 @@
               </tr>
               <tr>
                 <td>Window total size</td>
-                <td>{viewport.width} x {viewport.height} (px)</td>
+                <td>{viewportInfo.width} x {viewportInfo.height} (px)</td>
               </tr>
               <tr>
                 <td>Screen resolution</td>
-                <td>{screen.width} x {screen.height} (px)</td>
+                <td>{screenInfo.width} x {screenInfo.height} (px)</td>
               </tr>
 
-              {#if screen.orientation}
+              {#if screenInfo.orientation}
                 <tr>
                   <td>Orientation</td>
-                  <td>{screen.orientation}</td>
+                  <td>{screenInfo.orientation}</td>
                 </tr>
               {/if}
 
               <tr>
                 <td>Pixel Ratio</td>
-                <td>{viewport.pixelRatio}dppx ({viewport.pixelRatio * 100}%)</td>
+                <td>{viewportInfo.pixelRatio}dppx ({viewportInfo.pixelRatio * 100}%)</td>
               </tr>
               <tr>
                 <td>Is this context secure?</td>
-                <td>{viewport.secure === true ? 'Yes' : 'No'}</td>
+                <td>{viewportInfo.secure === true ? 'Yes' : 'No'}</td>
               </tr>
               <tr>
                 <td>Does this page uses SSL?</td>
@@ -169,7 +181,7 @@
               </tr>
               <tr>
                 <td>Are you connected to the internet?</td>
-                <td>{viewport.online === true ? 'Yes' : 'No'}</td>
+                <td>{viewportInfo.online === true ? 'Yes' : 'No'}</td>
               </tr>
             </tbody>
           </table>
@@ -181,13 +193,13 @@
             <tbody>
               <tr>
                 <td>User Agent</td>
-                <td>{navigator.userAgent}</td>
+                <td>{navigatorInfo.userAgent}</td>
               </tr>
 
-              {#if navigator.vendor}
+              {#if navigatorInfo.vendor}
               <tr>
                 <td>Browser Vendor</td>
-                <td>{navigator.vendor}</td>
+                <td>{navigatorInfo.vendor}</td>
               </tr>
               {/if}
 
@@ -203,20 +215,20 @@
 
               <tr>
                 <td>Current language</td>
-                <td>{navigator.language}</td>
+                <td>{navigatorInfo.language}</td>
               </tr>
 
-              {#if navigator.logicalProcessors}
+              {#if navigatorInfo.logicalProcessors}
               <tr>
                 <td>Logical Processors</td>
-                <td>{navigator.logicalProcessors}</td>
+                <td>{navigatorInfo.logicalProcessors}</td>
               </tr>
               {/if}
 
-              {#if navigator.tracking}
+              {#if navigatorInfo.tracking}
               <tr>
                 <td>Is DNT (do not track) enabled?</td>
-                <td>{navigator.tracking === '1' ? 'Yes' : navigator.tracking}</td>
+                <td>{navigatorInfo.tracking === '1' ? 'Yes' : navigatorInfo.tracking}</td>
               </tr>
               {/if}
             </tbody>
@@ -260,7 +272,7 @@
             <tbody>
               <tr>
                 <td>Can use cookies?</td>
-                <td>{navigator.cookies === true ? 'Yes' : 'No'}</td>
+                <td>{navigatorInfo.cookies === true ? 'Yes' : 'No'}</td>
               </tr>
               <tr>
                 <td>Is there any cookie stored?</td>
@@ -282,4 +294,8 @@
   </div>
 
   <Footer />
+
+  {#if isModalOpen}
+    <ViewportModal />
+  {/if}
 </div>
