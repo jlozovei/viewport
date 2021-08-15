@@ -5,8 +5,20 @@
 
   export const viewportInfo = viewport;
 
+  let isModalOpen;
+
+  viewportModalOpen.subscribe(value => {
+    isModalOpen = value;
+  });
+
   function closeModal() {
     viewportModalOpen.update(() => false);
+  }
+
+  function handleKeydown(event) {
+    if (event.key === 'Escape') {
+      closeModal();
+    }
   }
 </script>
 
@@ -44,6 +56,8 @@
     font-size: 1.25rem;
   }
 </style>
+
+<svelte:window on:keydown={handleKeydown}/>
 
 <div class="viewport-modal">
   <button class="viewport-modal__close" on:click={closeModal} title="Close modal">Close</button>
