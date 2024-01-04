@@ -1,13 +1,13 @@
-import '@testing-library/jest-dom/extend-expect';
-import { render, fireEvent } from '@testing-library/svelte';
+import "@testing-library/jest-dom/extend-expect";
+import { render } from "@testing-library/svelte";
 
-import App from './App.svelte';
+import App from "./App.svelte";
 
-describe('App', () => {
-  it('renders', () => {
+describe("App", () => {
+  it("renders", () => {
     const { getByText } = render(App);
 
-    expect(getByText('What is my viewport?')).toBeInTheDocument();
-    expect(getByText('MDN documentation')).toBeInTheDocument();
+    expect(getByText("What is my viewport?")).toBeInTheDocument();
+    expect(getByText("MDN documentation")).toBeInTheDocument();
   });
 });
