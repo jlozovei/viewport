@@ -19,11 +19,13 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@testing-library/jest-dom": "^6.2.0",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/svelte": "^4.0.5",
     "babel-jest": "^29.7.0",
+    "babel-plugin-transform-vite-meta-env": "^1.0.3",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "jest-transform-svelte": "^2.1.1",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
@@ -48,8 +50,8 @@
   "homepage": "https://myviewport.com",
   "jest": {
     "transform": {
-      "^.+\\.svelte$": "jest-transform-svelte",
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.svelte$": "svelte-jester"
     },
     "moduleFileExtensions": [
       "js",
@@ -63,8 +65,10 @@
     "transformIgnorePatterns": [
       "node_modules"
     ],
+    "testEnvironment": "jest-environment-jsdom",
+    "extensionsToTreatAsEsm": [".svelte"],
     "setupFilesAfterEnv": [
-      "@testing-library/jest-dom/extend-expect"
+      "<rootDir>/setupTests.js"
     ]
   },
   "babel": {
@@ -77,6 +81,9 @@
           }
         }
       ]
+    ],
+    "plugins": [
+      "babel-plugin-transform-vite-meta-env"
     ]
   }
 }
